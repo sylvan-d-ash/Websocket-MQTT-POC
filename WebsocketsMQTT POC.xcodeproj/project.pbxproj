@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		043B4D972E743A7C00BCF363 /* CocoaMQTT in Frameworks */ = {isa = PBXBuildFile; productRef = 043B4D962E743A7C00BCF363 /* CocoaMQTT */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		043B4D7D2E743A3500BCF363 /* WebsocketsMQTT POC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WebsocketsMQTT POC.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				043B4D972E743A7C00BCF363 /* CocoaMQTT in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = "WebsocketsMQTT POC";
 			packageProductDependencies = (
+				043B4D962E743A7C00BCF363 /* CocoaMQTT */,
 			);
 			productName = "WebsocketsMQTT POC";
 			productReference = 043B4D7D2E743A3500BCF363 /* WebsocketsMQTT POC.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 043B4D742E743A3500BCF363;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				043B4D952E743A7C00BCF363 /* XCRemoteSwiftPackageReference "CocoaMQTT" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 043B4D7E2E743A3500BCF363 /* Products */;
 			projectDirPath = "";
@@ -335,6 +344,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		043B4D952E743A7C00BCF363 /* XCRemoteSwiftPackageReference "CocoaMQTT" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/emqx/CocoaMQTT";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.9;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		043B4D962E743A7C00BCF363 /* CocoaMQTT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 043B4D952E743A7C00BCF363 /* XCRemoteSwiftPackageReference "CocoaMQTT" */;
+			productName = CocoaMQTT;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 043B4D752E743A3500BCF363 /* Project object */;
 }
