@@ -60,15 +60,24 @@ final class MQTTManager: ObservableObject {
     private var mqtt: CocoaMQTT?
     private var typingTask: Task<Void, Never>?
     private let topic = "chat/demo"
-    private let clientID = "iOS-Demo-Client-\(UUID().uuidString.prefix(6))"
+    private let socket: TestSocket = .emqxWs
+    let clientID = "iOS-Demo-Client-\(UUID().uuidString.prefix(6))"
 
     func connect() {
-        let mqtt = CocoaMQTT(clientID: clientID, host: "broker.emqx.io", port: 8083/*, socket: .ws("/mqtt")*/)
+        print("Initiate connection...")
+
+        let mqtt = CocoaMQTT(
+            clientID: clientID,
+            host: socket.host,
+            port: socket.port,
+            socket: CocoaMQTTWebSocket(uri: "/mqtt")
+        )
         mqtt.username = nil
         mqtt.password = nil
         mqtt.keepAlive = 60
         mqtt.autoReconnect = true
         mqtt.allowUntrustCACertificate = true
+        //mqtt.enableSSL = true
         mqtt.delegate = self
         _ = mqtt.connect()
         self.mqtt = mqtt
@@ -115,6 +124,7 @@ final class MQTTManager: ObservableObject {
 
 extension MQTTManager: CocoaMQTTDelegate {
     func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck) {
+        print("[MQTT] Connected - ack: \(ack) | socket: \(socket.name)")
         guard ack == .accept else { return }
         mqtt.subscribe(topic)
         DispatchQueue.main.async {
@@ -123,6 +133,7 @@ extension MQTTManager: CocoaMQTTDelegate {
     }
 
     func mqttDidDisconnect(_ mqtt: CocoaMQTT, withError err: (any Error)?) {
+        print("[MQTT] Disconnected - socket: \(socket.name) | error: \(err?.localizedDescription ?? "No error")")
         DispatchQueue.main.async {
             self.isConnected = false
         }
