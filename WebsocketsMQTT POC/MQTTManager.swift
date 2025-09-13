@@ -8,6 +8,49 @@
 import CocoaMQTT
 import Combine
 import Foundation
+import CocoaMQTTWebSocket
+
+enum TestSocket {
+    case emqxWs
+    case emqxWss
+    case hiveMq
+    case mosquittoTest
+
+    var name: String {
+        switch self {
+        case .emqxWs: "emqWs"
+        case .emqxWss: "emqWss"
+        case .hiveMq: "hiveMq"
+        case .mosquittoTest: "mosquittoTest"
+        }
+    }
+
+    var urlString: String {
+        switch self {
+        case .emqxWs: "ws://broker.emqx.io:8083/mqtt"
+        case .emqxWss: "wss://broker.emqx.io:8084/mqtt"
+        case .hiveMq: "wss://broker.hivemq.com:8884/mqtt"
+        case .mosquittoTest: "wss://test.mosquitto.org:8081/mqtt"
+        }
+    }
+
+    var host: String {
+        switch self {
+        case .emqxWs, .emqxWss: "broker.emqx.io"
+        case .hiveMq: "broker.hivemq.com"
+        case .mosquittoTest: "test.mosquitto.org"
+        }
+    }
+
+    var port: UInt16 {
+        switch self {
+        case .emqxWs: return 8083
+        case .emqxWss: return 8084
+        case .hiveMq: return 8884
+        case .mosquittoTest: return 8081
+        }
+    }
+}
 
 final class MQTTManager: ObservableObject {
     @Published private(set) var messages: [ChatMessage] = []
@@ -33,14 +76,17 @@ final class MQTTManager: ObservableObject {
 
     func disconnect() {
         mqtt?.disconnect()
+        mqtt = nil
     }
 
     func sendMessage(_ text: String) {
+        guard isConnected else { return }
         let chat = ChatMessage(sender: clientID, text: text)
         publish(chat)
     }
 
     func userIsTyping(currentText: String) {
+        guard isConnected else { return }
         typingTask?.cancel()
 
         if !currentText.isEmpty {
@@ -56,7 +102,7 @@ final class MQTTManager: ObservableObject {
     }
 
     private func publish(_ chat: ChatMessage) {
-        guard let mqtt else { return }
+        guard let mqtt, isConnected else { return }
 
         do {
             let data = try JSONEncoder().encode(chat)
