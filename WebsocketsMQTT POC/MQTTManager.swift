@@ -59,6 +59,7 @@ final class MQTTManager: ObservableObject {
 
     private var mqtt: CocoaMQTT?
     private var typingTask: Task<Void, Never>?
+    private var isTyping = false
     private let topic = "chat/demo"
     private let socket: TestSocket = .emqxWs
     let clientID = "iOS-Demo-Client-\(UUID().uuidString.prefix(6))"
@@ -97,16 +98,29 @@ final class MQTTManager: ObservableObject {
     func userIsTyping(currentText: String) {
         guard isConnected else { return }
         typingTask?.cancel()
+        typingTask = nil
 
         if !currentText.isEmpty {
-            publish(ChatMessage(sender: clientID, event: .typing))
+            if !isTyping {
+                publish(ChatMessage(sender: clientID, event: .typing))
+                isTyping = true
+            }
 
-            typingTask = Task {
-                try? await Task.sleep(nanoseconds: 1_500_000_000)
+            typingTask = Task { [weak self] in
+                do {
+                    try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5s pause
+                } catch {
+                    return
+                }
+
+                guard let self, !Task.isCancelled else { return }
                 publish(ChatMessage(sender: clientID, event: .stopTyping))
+                isTyping = false
+                typingTask = nil
             }
         } else {
             publish(ChatMessage(sender: clientID, event: .stopTyping))
+            isTyping = false
         }
     }
 

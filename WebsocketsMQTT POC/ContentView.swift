@@ -31,7 +31,7 @@ struct ContentView: View {
         NavigationStack {
             VStack {
                 List(manager.messages) { msg in
-                    Text("\(msg.sender): \(msg.text ?? "")")
+                    Text("\(sender(for: msg))\(msg.text ?? "")")
                         .padding(6)
                         .background(background(for: msg).opacity(0.2))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -43,6 +43,7 @@ struct ContentView: View {
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 }
+                .padding()
                 .listStyle(.plain)
 
                 if !manager.typingUsers.isEmpty {
@@ -85,6 +86,13 @@ struct ContentView: View {
             return .blue
         }
         return .green
+    }
+
+    private func sender(for msg: ChatMessage) -> String {
+        if msg.sender == manager.clientID {
+            return ""
+        }
+        return "\(msg.sender): "
     }
 }
 
