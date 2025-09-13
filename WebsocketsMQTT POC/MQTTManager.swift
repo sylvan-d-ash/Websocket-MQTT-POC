@@ -18,10 +18,10 @@ enum TestSocket {
 
     var name: String {
         switch self {
-        case .emqxWs: "emqWs"
-        case .emqxWss: "emqWss"
-        case .hiveMq: "hiveMq"
-        case .mosquittoTest: "mosquittoTest"
+        case .emqxWs: "emqWs"                   // Working
+        case .emqxWss: "emqWss"                 // Not working
+        case .hiveMq: "hiveMq"                  // Not working
+        case .mosquittoTest: "mosquittoTest"    // Not working
         }
     }
 
@@ -77,7 +77,7 @@ final class MQTTManager: ObservableObject {
         mqtt.password = nil
         mqtt.keepAlive = 60
         mqtt.autoReconnect = true
-        mqtt.allowUntrustCACertificate = true
+        //mqtt.allowUntrustCACertificate = true
         //mqtt.enableSSL = true
         mqtt.delegate = self
         _ = mqtt.connect()
